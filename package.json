@@ -1,0 +1,11 @@
+{
+  "name": "video_playlist-backend",
+  "version": "1.0.0",
+  "description": "A backend Of Video PlayList",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Irfan Kazi",
+  "license": "ISC"
+}
