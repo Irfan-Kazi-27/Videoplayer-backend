@@ -22,7 +22,7 @@ const registerUser = asyncHandler( async(req,res)=>{
 
 
     //step2:validating the Data
-    if([username,fullname,email,password,avtar].some((field)=>{field?.trim()===""})){
+    if([username,fullname,email,password,avatar].some((field)=>{field?.trim()===""})){
         throw new ApiError(400,"All Fields are Required");
     }
     if(password.length<6){
@@ -34,7 +34,7 @@ const registerUser = asyncHandler( async(req,res)=>{
     }
 
      //step3: checking if the User already exists
-    const userExist = User.findOne({
+    const userExist = await User.findOne({
         $or:[{ username },{ email }]
     })
     
@@ -45,6 +45,8 @@ const registerUser = asyncHandler( async(req,res)=>{
     //step4:check for the image and avatar
    const avatarImagepath = req.files?.avatar[0]?.path
    const coverImagepath = req.files?.coverimage[0]?.path
+  
+   
 
    if(!avatarImagepath){
       throw new ApiError(410,"Avatar Image is not Found")
@@ -53,6 +55,8 @@ const registerUser = asyncHandler( async(req,res)=>{
    //step5:upload them to the cloudniary
     const avatarCloudUpload = await uploadFile(avatarImagepath);
     const coverImageCloudUpload = await uploadFile(coverImagepath);
+   
+    
 
    if (!avatarCloudUpload) {
         throw new ApiError(411,"Image Not Uploaded")
@@ -71,7 +75,7 @@ const registerUser = asyncHandler( async(req,res)=>{
     
 
      //step7:removing the pass and refresh token from the response
-    const createduser =  await User.findById(userCreated._id).select("-password -refreshToken")
+    const createduser =  await User.findById(user._id).select("-password -refreshToken")
 
     if (!createduser) {
         throw new ApiError(500,"Something Went Wrong Please try Again Later")
