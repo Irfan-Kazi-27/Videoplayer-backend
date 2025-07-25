@@ -14,13 +14,10 @@ const uploadFile = async (localfilePath)=>{
       try{
         if(!localfilePath) return "file path is not received";
         //uploading file to cloudinary
-
-        
-        
         const response = await cloudinary.uploader.upload(localfilePath, {
             resource_type: "auto",
         });
-        log("File uploaded successfully:", response.url);
+          fs.unlinkSync(localfilePath);
           return response;
       }catch(err){
         fs.unlinkSync(localfilePath);
