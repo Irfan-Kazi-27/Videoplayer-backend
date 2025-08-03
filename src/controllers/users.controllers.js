@@ -246,7 +246,7 @@ const AccesTokenRefresh = asyncHandler(async(req,res)=>{
 const changeUserPassword = asyncHandler(async(req,res)=>{
         //taking Old password and new password from req.body
         const {oldPassword,newPassword} = req.body
-
+         
         //getting Out the user Information
         const user = await User.findById( req.user?._id)
 
@@ -293,18 +293,22 @@ const updateUserDetail = asyncHandler(async(req,res)=>{
             throw new ApiError(410,"Both the field is Required")
         }
 
+      
         const user = await User.findByIdAndUpdate(
             req.user?._id,
-            {
+             {
                 $set:{
                     fullname,
                     email
                 }
-
-            },{
+ 
+            },
+            {
                 new:true
-            }.select("-password")
-        )
+            }
+            
+        ).select("-password")
+       
 
        return res.status(200)
         .json(
@@ -319,32 +323,33 @@ const updateUserDetail = asyncHandler(async(req,res)=>{
 
 const updateUserAvatar = asyncHandler(async(req,res)=>{
     //taking the avatar localfile path from req.body
-    const avatarLocalpath = req.file?.path
-    if (!avatarLocalpath) {
-        throw new ApiError(404,"Avatar file is Missing")
-    }
+   
+        const avatarLocalpath = req.file?.path
+        console.log(avatarLocalpath);
+        
+        if (!avatarLocalpath) {
+            throw new ApiError(404,"Avatar file is Missing")
+        }
+    
+        const newAvatarFile = await uploadFile(avatarLocalpath)
+    
+        if (!newAvatarFile.url) {
+            throw new ApiError(400,"File not Uploaded On Cloudinary")
+        }
+    
+        const user =  await User.findByIdAndUpdate(
+            req.user?._id,
+            {
+                $set:{
+                    avatar:newAvatarFile.url  
+                }
+            },
+            {new:true}
+        ).select("-password")
+        
 
-    const newAvatarFile = await uploadFile(avatarLocalpath)
+        
 
-    if (!newAvatarFile.url) {
-        throw new ApiError(400,"File not Uploaded On Cloudinary")
-    }
-
-    const user =  await User.findByIdAndUpdate(
-        req.user?._id,
-        {
-            $set:{
-                avatar:newAvatarFile.url  
-            }
-        },
-        {new:true}
-    ).select("-password")
-
-     //delete Old Avatar File 
-    const deleteOldAvatarfile = fs.unlinkSync(avatarLocalpath)
-    if (deleteOldAvatarfile) {
-        throw new ApiError(400,"Old file is not deleted")
-    }
     
 
     return res.status(200)
@@ -365,7 +370,7 @@ const updateUserCoverImage = asyncHandler(async(req,res)=>{
         throw new ApiError(404,"Cover Image file is Missing")
     }
 
-    const newCoverImageFile = await uploadFile(avatarLocalpath)
+    const newCoverImageFile = await uploadFile(coverImageLocalpath)
 
     if (!newCoverImageFile.url) {
         throw new ApiError(400,"File not Uploaded On Cloudinary")
@@ -381,11 +386,7 @@ const updateUserCoverImage = asyncHandler(async(req,res)=>{
         {new:true}
     ).select("-password")
 
-    //delete Old cover Image File 
-    const deleteOldCoverImagefile = fs.unlinkSync(coverImageLocalpath)
-    if (deleteOldCoverImagefile) {
-        throw new ApiError(400,"Old file is not deleted")
-    }
+  
 
     return res.status(200)
     .json(
@@ -476,7 +477,7 @@ const getWatchHistory = asyncHandler(async(req,res)=>{
     const user = await User.aggregate([
         {
             $match:{
-                _id: new mongoose.Types.ObjectId.createFromHexString(req.user._id) 
+                _id: new mongoose.Types.ObjectId(req.user?._id) 
             }
         },
         {
