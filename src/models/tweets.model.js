@@ -13,4 +13,4 @@ const tweetSchema = new Schema ({
 },{timestamps:true})
 
 
-export const tweet = model("tweet",tweetSchema)
+export const Tweet = model("Tweet",tweetSchema)

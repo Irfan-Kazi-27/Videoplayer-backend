@@ -4,14 +4,12 @@ import {uploadFile} from "../utils/filehandle.js";
 import {User} from "../models/user.model.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import {generateAccestokenAndRefreshtoken} from "../utils/tokenGenerate.js"
-import fs from "fs"
 import jwt from "jsonwebtoken"
-import { log } from 'console';
 import mongoose from 'mongoose';
 
 const registerUser = asyncHandler( async(req,res)=>{
     //writing logic of registring User
-    //step1 : getting data from request Body
+    //step1 :getting data from request Body
     //step2:validating the Data
     //step3: checking if the User already exists
     //step4:check for the image and avatar
@@ -50,7 +48,7 @@ const registerUser = asyncHandler( async(req,res)=>{
 
     //step4:check for the image and avatar
    const avatarImagepath = req.files?.avatar[0]?.path
-//    const coverImagepath = req.files?.coverimage[0]?.path
+    //const coverImagepath = req.files?.coverimage[0]?.path
     
     
    let coverImagepath;
@@ -115,7 +113,7 @@ const loginUser = asyncHandler(async (req,res) => {
         
         //step 1:user se email password lenge
         const {email,password,username} =req.body
-        console.log(email);
+        
         
         
         //step 2 :check if the user on the basis of email ya username
@@ -249,6 +247,7 @@ const changeUserPassword = asyncHandler(async(req,res)=>{
          
         //getting Out the user Information
         const user = await User.findById( req.user?._id)
+        
 
         if (!user) {
             throw new ApiError(400,"You are not LoggedIn")
@@ -406,7 +405,7 @@ const getUserProfile = asyncHandler(async(req,res)=>{
         throw new ApiError(400,"UserName is Missing")
     }
 
-const channelInfo  =  await User.aggregate([
+    const channelInfo  =  await User.aggregate([
         {
             $match:{
                 username:username?.toLowerCase()
@@ -516,6 +515,8 @@ const getWatchHistory = asyncHandler(async(req,res)=>{
             }
         }
     ])
+    
+    
 
     return res.status(200)
     .json(new ApiResponse(

@@ -14,9 +14,12 @@ app.use(cookieParser());
 
 //Router Importing 
 import userRouter from "./routes/users.routes.js"
+import tweetRouter from "./routes/tweet.routes.js"
 
 
 //declaring Routesa
 app.use("/api/v1/users", userRouter);
-
+//https/api/v1/users
+app.use("/api/v1/tweets",tweetRouter)
+// https/api/v1/tweets/c/:owner
 
