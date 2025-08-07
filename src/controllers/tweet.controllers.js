@@ -30,7 +30,7 @@ const createTweet = asyncHandler(async (req, res) => {
         content,
         owner
     })
-    await usertweet.save()
+    
     
     // //returning the response
     return res

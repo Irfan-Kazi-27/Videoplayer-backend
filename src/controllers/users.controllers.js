@@ -56,11 +56,7 @@ const registerUser = asyncHandler( async(req,res)=>{
         coverImagepath = req.files.coverimage[0].path
    }
    
-    
-  
-   
-
-   if(!avatarImagepath){
+    if(!avatarImagepath){
       throw new ApiError(410,"Avatar Image is not Found")
    }
 
@@ -87,16 +83,18 @@ const registerUser = asyncHandler( async(req,res)=>{
     
 
      //step7:removing the pass and refresh token from the response
-    const createduser =  await User.findById(user._id).select("-password -refreshToken")
+     const createdUser = await User.findById(user._id).select(
+        "-password -refreshToken"
+    )
 
-    if (!createduser) {
+    if (!createdUser) {
         throw new ApiError(500,"Something Went Wrong Please try Again Later")
     }
     
 
      //step8:send the response
     return res.status(201).json( 
-        new ApiResponse(200,user,"User Created SucessFully!")
+        new ApiResponse(200,createdUser,"User Created SucessFully!")
     )
 
     })
