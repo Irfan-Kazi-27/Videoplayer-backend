@@ -2,8 +2,8 @@ import mongoose,{model,Schema} from "mongoose";
 import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const videoSchema = new Schema({
-    videoFile:{
-        type:string,
+    videofile:{
+        type:String,
         required:[true,"Video file is required"],
     },
     thumbnail:{
@@ -33,11 +33,11 @@ const videoSchema = new Schema({
         default:0
     },
     isPublished:{
-        type:boolean,
+        type:Boolean,
         default:true
     }
 },{timestamps:true});
 
 videoSchema.plugin(aggregatePaginate);
 
-export const Videos = model("Videos","videoSchema")
+export const Video = model("Video",videoSchema)
