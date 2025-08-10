@@ -9,7 +9,7 @@ const router = Router()
 router.use(verifyJWt)
 
 router.route("/:videoId").post(addComment)
-router.route("/get-Usercomment").get(getVideoComments)
+router.route("/get-Usercomment/:videoId").get(getVideoComments)
 router.route("/update-Usercomment/:commentId").patch(updateComment)
 router.route("/delete-Usercomment/:commentId").delete(deleteComment)
 

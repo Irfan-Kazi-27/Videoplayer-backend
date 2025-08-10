@@ -4,7 +4,7 @@ import {Comment} from "../models/comment.model.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
-import { isValidObjectId } from "mongoose"
+import mongoose, { isValidObjectId, Mongoose } from "mongoose"
 import { response } from "express"
 
 
@@ -36,7 +36,7 @@ const addComment = asyncHandler(async (req, res) => {
 //Create the Comment 
     const comment =await Comment.create({
         content,
-        videoId,
+        video:videoId,
         owner
     })
     
@@ -61,9 +61,79 @@ const getVideoComments = asyncHandler(async (req, res) => {
 //Get the Video Id from request paramters
     const {videoId} = req.params    
     const {page = 1, limit = 10} = req.query 
+//Check For the videoId is A valid Mongoose ID
+    if (!isValidObjectId(videoId)) {
+        throw new ApiError(400,"Invalid Video Id")
+    }
+    console.log(`video Id is ${videoId} and type is ${typeof(videoId)}`);
+    
+//wee need to convert this Object Id into Mongoose Object Id now it is in String
+    const videoObjectId = new mongoose.Types.ObjectId(videoId)
+    
+//Get the Owner Id from the request user
+    const owner = req.user._id
+    if (!owner) {
+        throw new ApiError(404,"Logged In first")
+    }
+//get all the Comments through Video Id
+   const allCommentOfVideo = await Comment.aggregate([
+        {
+            $match:{video:videoObjectId}
+        },
+        {
+            $lookup:{
+                from:"videos",
+                localField:"video",
+                foreignField:"_id",
+                as:"commentonwhichVideo"
+            }
+        },
+        {
+            $lookup:{
+                from:"users",
+                localField:"owner",
+                foreignField:"_id",
+                as:"ownerofcomment"
+            }
+        },
+        {
+            $project:{
+                content:1,
+                owner:{
+                    $arrayElemAt:["$ownerofcomment.username",0]
+                    
+                },
+                video:{
+                    $arrayElemAt:["$commentonwhichVideo.title",0]
+                },
+                createdAt:1
+            }
+        },
+        {
+            $skip:(page - 1) * parseInt(limit),
+        },
+        {
+             
+            $limit: parseInt(limit),
+    
+        }
+        
+    ])
+    console.log(allCommentOfVideo);
+    
    
+    
 
-
+// return All the Comment From the Video Id
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(
+            200,
+            allCommentOfVideo,
+            "Comment Fetched Succesfully"
+        )
+    )
 })
 
 const updateComment = asyncHandler(async (req, res) => {
