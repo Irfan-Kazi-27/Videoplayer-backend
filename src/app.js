@@ -17,9 +17,10 @@ import userRouter from "./routes/users.routes.js"
 import tweetRouter from "./routes/tweet.routes.js"
 import commentRouter from "./routes/comment.routes.js"
 import videoRouter from "./routes/video.routes.js"
+import playlistRouter from "./routes/playlist.routes.js"
 
 
-//declaring Routesa
+//declaring Routes
 app.use("/api/v1/users", userRouter);
 //https/api/v1/users
 app.use("/api/v1/tweets",tweetRouter)
@@ -27,4 +28,5 @@ app.use("/api/v1/tweets",tweetRouter)
 app.use("/api/v1/comments",commentRouter)
 //https/api/v1/comments
 app.use("/api/v1/videos",videoRouter)
-//https/api/v1/videos
+//https/api/v1/videos/
+app.use("/api/v1/playlist",playlistRouter)

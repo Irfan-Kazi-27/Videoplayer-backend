@@ -65,7 +65,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
     if (!isValidObjectId(videoId)) {
         throw new ApiError(400,"Invalid Video Id")
     }
-    console.log(`video Id is ${videoId} and type is ${typeof(videoId)}`);
+    //console.log(`video Id is ${videoId} and type is ${typeof(videoId)}`);
     
 //wee need to convert this Object Id into Mongoose Object Id now it is in String
     const videoObjectId = new mongoose.Types.ObjectId(videoId)
@@ -119,10 +119,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
         }
         
     ])
-    console.log(allCommentOfVideo);
-    
-   
-    
+    // console.log(allCommentOfVideo);
 
 // return All the Comment From the Video Id
     return res
