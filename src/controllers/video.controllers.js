@@ -120,12 +120,16 @@ const updateVideo = asyncHandler(async (req, res) => {
     const { title, description } = req.body
 
     //get the New thumbnail from the request file
-    const newThumbnailPath = req.file.path
+    let newThumbnailPath
+    if (req.file) {
+        newThumbnailPath = req.file.path 
+    }
+    
     console.log(req.file);
     
     
     //now check for if user want to just update one thing or two things of their video
-    if (!( title || description || newThumbnailPath)) {
+    if (!title || !description ) {
         throw new ApiError(400,"atleast one thing is required To update The video Detail")
     }
 /*Upload the new thumbnail to the Cloudinary*/ 

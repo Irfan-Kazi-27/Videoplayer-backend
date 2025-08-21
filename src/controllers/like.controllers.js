@@ -148,9 +148,35 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
 
 const getLikedVideos = asyncHandler(async (req, res) => {
 //TODO: get all liked 
-    const LikedVideos = await like.find(
+//get all the thing which a particular user like [tweet,video,comment]
+//usmai se video jo hai vo nikalna hai
+    const User = req.user._id
+    // const allLikedVideo = await like.aggregate([
+    //     {
+    //         $match:{likedby:User}
+    //     },
+    //     {
+            
+    //     }
+    // ])
+    const allLikedVideo = await like.find(
+        {
+            likedby:User,
+            video:{$exists:true}
+        }
 
-    )    
+    )
+    return res.status(200)
+    .json(
+        new ApiResponse(
+            200,
+            allLikedVideo,
+            "All liked Video Fetched Successfully"
+        )
+    )
+    
+    
+
 })
 
 export {
