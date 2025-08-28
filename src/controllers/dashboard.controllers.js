@@ -83,7 +83,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
             TotalCommentLike,
             Totaltweetike,
             TotalVideoLike,
-            TotalVideoViews:TotalVideoViews[0].totalviews || 0  
+            TotalVideoViews:TotalVideoViews[0].totalviews || 0  //If no views then it will show 0
             },
            "Channel stats Fetched Sucessfully"
         )
