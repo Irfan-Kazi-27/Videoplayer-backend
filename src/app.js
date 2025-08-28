@@ -20,6 +20,7 @@ import videoRouter from "./routes/video.routes.js"
 import playlistRouter from "./routes/playlist.routes.js"
 import likeRouter from "./routes/like.routes.js"
 import subscriptionRouter from './routes/subscription.routes.js';
+import dashboardRouter from './routes/dashboard.routes.js'
 
 //declaring Routes
 app.use("/api/v1/users", userRouter);
@@ -35,3 +36,5 @@ app.use("/api/v1/playlist",playlistRouter)
 app.use("/api/v1/likes",likeRouter)
 //api/v1/subscription
 app.use("/api/v1/subscription", subscriptionRouter)
+//apii
+app.use("/api/v1/dashboard", dashboardRouter)
