@@ -1,5 +1,6 @@
 import mongoose, { isValidObjectId } from "mongoose"
 import { Video } from "../models/videos.model.js"
+import {User} from "../models/user.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
@@ -9,9 +10,67 @@ import {uploadFile} from "../utils/filehandle.js"
 
 
 const getAllVideos = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
+    const { page = 1, limit = 10, query="", sortBy="createdAt", sortType="desc", userId } = req.query
     //TODO: get all videos based on query, sort, pagination
-    //
+    
+    const match = {
+        ...(query ?{title:{$regex:query, $options:"i"}} : {}), 
+        ...(userId?{owner:mongoose.Types.ObjectId(userId)} :{})
+    };
+
+    const videos = await Video.aggregate([
+        {
+            $match:match
+        },
+        {
+            $lookup:{
+                from:"users",//collection to join
+                localField:"owner", //Matching "owner" field in the videos collection
+                foreignField:"_id",//matching "_id" from the user collection
+                as:"VideosByOwner"
+
+            }
+        },
+        {
+             $project: {
+        videoFile: 1, // Video file link
+        thumbnail: 1, // Thumbnail image link
+        title: 1, // Video title
+        description: 1, // Video description
+        duration: 1, // Video duration
+        views: 1, // Number of views
+        isPublished: 1, // Whether the video is published or not
+        owner: {
+          $arrayElemAt: ["$VideosByOwner",0], // Extracts the first user object from the array
+        },
+      },
+    },
+      
+    {
+        $sort:{[sortBy]: sortType === "desc" ? -1 : 1,}
+    },
+    {
+        $skip:(page-1)*parseInt(limit)
+    },
+    {
+        $limit:limit
+    }
+    ])
+
+    if (!videos?.length) {
+        throw new ApiError(404,"Videos not found")
+    }
+
+    return res.status(200)
+    .json(
+        new ApiResponse(
+            200,
+            videos,
+            "Videos Fetched Succesfully"
+        )
+    )
+
+    
 })
 
 const publishAVideo = asyncHandler(async (req, res) => {    

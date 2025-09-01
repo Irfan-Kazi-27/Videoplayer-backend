@@ -1,4 +1,3 @@
-import mongoose, { isValidObjectId } from "mongoose"
 import {subscription} from "../models/subscription.model.js"
 import {Video} from "../models/videos.model.js"
 import {ApiError} from "../utils/ApiError.js"
@@ -7,7 +6,7 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 import { like } from "../models/like.model.js"
 import {Tweet} from "../models/tweets.model.js"
 import { Comment } from "../models/comment.model.js"
-import { totalmem } from "os"
+
 
 const getChannelStats = asyncHandler(async (req, res) => {
     // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.

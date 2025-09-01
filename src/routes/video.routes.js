@@ -1,5 +1,6 @@
 import Router from "express"
 import {publishAVideo,
+        getAllVideos,
         getVideoById,
         togglePublishStatus,
         updateVideo,
@@ -10,7 +11,8 @@ import { upload } from "../middlewares/multer.middleware.js"
 const router = Router()
 router.use(verifyJWt)
 
-router.route("/").post(upload.fields([
+router.route("/").get(getAllVideos)
+router.route("/pusblished-video").post(upload.fields([
     {name:"videofile",maxCount:1},
     {name:"thumbnail",maxCount:1}
 ]),publishAVideo)
